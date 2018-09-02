@@ -2,6 +2,16 @@ import React, { Component } from 'react';
 import { withGoogleMap, GoogleMap, Marker } from 'react-google-maps';
 
 class Map extends Component {
+
+    setNewMarker = (coords) => {
+        
+    }
+
+    handleMapClick = event => {
+        const latlng = event.latLng.lat() + ',' + event.latLng.lng();
+        console.log('Klick: ', latlng);
+    }
+
     render () {
         const { markers } = this.props;
 
@@ -15,6 +25,7 @@ class Map extends Component {
             <GoogleMap
                 defaultCenter = {{lat:59.334591, lng: 18.063240}}
                 defaultZoom = {11}
+                onClick={this.handleMapClick}
             >
             {mapMarkers}
             </GoogleMap>

@@ -7,7 +7,8 @@ class Form extends Component {
 
         this.initialState = {
             name: '',
-            job: ''
+            lat: 0,
+            lng: 0
         };
 
         this.state = this.initialState; 
