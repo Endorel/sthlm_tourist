@@ -2,10 +2,9 @@
 This is a tool for adding sites you want to visit to a manageable list that shows their locations on a map. Click the map to add sites to the list.
 
 ## Install & run
-To install the packages open a terminal that supports Node.js, navigate to the folder and run this command: npm install. When the installer is finished run the command ´yarn start´´
- to start the dev-server.
+To install the packages open a terminal that supports Node.js, navigate to the folder and run this command: npm install. When the installer is finished run the command `yarn start` to start the dev-server.
 
-To create a production build, use ´yarn build´.
+To create a production build, use `yarn build`.
 
 For further information about the available scrips, see this article:
 
