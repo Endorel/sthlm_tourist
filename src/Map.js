@@ -1,48 +1,43 @@
 import React, { Component } from 'react';
-import { withGoogleMap, GoogleMap, Marker } from 'react-google-maps';
+import { withGoogleMap, GoogleMap, Marker } from "react-google-maps";
+
+
+const RenderMap = withGoogleMap(props => (
+    
+    <GoogleMap
+        ref={props.onMapLoad}
+        onClick={props.onMapClick}
+        zoom={props.zoom}
+        center={props.center}>
+        {
+            props.markers.map((marker, i) => (
+                <Marker key={i} position={{lat: marker.lat, lng: marker.lng, zoom:marker.zoom}}
+                />
+            ))
+        }
+    </GoogleMap >
+));
 
 class Map extends Component {
+   
 
-    setNewMarker = (coords) => {
-        
-    }
-
-    handleMapClick = event => {
-        const latlng = event.latLng.lat() + ',' + event.latLng.lng();
-        console.log('Klick: ', latlng);
-    }
-
-    render () {
-        const { markers } = this.props;
-
-        const mapMarkers = markers.map((marker, index) => {
-            return (
-                <Marker key={index} position={{lat: marker.lat, lng: marker.lng}} />
-            );
-        });
-        const GoogleMapExample = withGoogleMap(props => (
-                
-            <GoogleMap
-                defaultCenter = {{lat:59.334591, lng: 18.063240}}
-                defaultZoom = {11}
-                onClick={this.handleMapClick}
-            >
-            {mapMarkers}
-            </GoogleMap>
-        ));
-
-
+    render() {
+        console.log('Props', this.props);
         return (
-            <div style={{margin: '0 auto'}}>
-                <GoogleMapExample
+            <div>
+                <RenderMap
                     containerElement = {<div style={{ height: '700px', width: '1200px'}} />}
                     mapElement = {<div style={{height: '100%'}} />}
+                    onMapLoad={this.props.onMapMounted}
+                    onMapClick={this.props.handleMapClick}
+                    markers = {this.props.markers}
+                    center={this.props.mapStart.center}
+                    zoom={11}
+                    
                 />
             </div>
-        );
+        )
     }
 }
 
 export default Map;
-
-

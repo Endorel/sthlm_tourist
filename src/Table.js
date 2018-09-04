@@ -4,11 +4,11 @@ import TableBody from './TableBody';
 
 class Table extends Component {
     render () {
-        const { markers, removeMarker } = this.props;
+        const { markers, removeMarker, panToMarker } = this.props;
         return(
             <table>
                 <TableHeader />
-                <TableBody markers={markers} removeMarker={removeMarker} />
+                <TableBody markers={markers} removeMarker={removeMarker} panToMarker={panToMarker} />
             </table>
         );
     }

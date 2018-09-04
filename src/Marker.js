@@ -3,7 +3,10 @@ import { Marker } from 'react-google-maps';
 
 class Marker extends Component {
     render () {
-        const mapMarkers = props.markers.map((makrer, index) => {
+
+        console.log('Marker.js används');
+
+        const mapMarkers = props.markers.map((marker, index) => {
             return (
                 <Marker key={index} position={{lat: marker.lat, lng: marker.lng}} />
             );
