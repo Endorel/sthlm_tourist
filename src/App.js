@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import './App.css';
-import Map from './Map';
-import Table from './Table';
-import {MAP} from 'react-google-maps/lib/constants'
-//import Form from './Form';
+import Map from './components/Map';
+import Table from './components/Table';
+import {MAP} from 'react-google-maps/lib/constants';
+
 
 //gain access to google.maps.Map in order to get access to the setZoom method
 //because package does not expose this method
@@ -13,114 +13,194 @@ const refs = {
 }
 
 class App extends Component {
-
-  state = {
-    mapStart: {
-      center: {
-        lat: 59.334591,
-        lng: 18.063240
-      },
-      zoom: 11
+  constructor (props) {
+    super(props);
+    this.state = {
+      mapStart: {
+        center: {
+            lat: 59.334591,
+            lng: 18.063240
+          },
+        zoom: 11
     },
-    markers: [
-      {
-        name: 'Vasa',
-        lat: 40.854885,
-        lng: -88.081807
-      },
-      {
-        name: 'Mall of Scandinavia',
-        lat: 59.369045,
-        lng: 18.005934
-      }
-    ]
-  };
+    markers: [{
+      id: 1,
+            name: 'Vasa',
+            day: 'Monday',
+            lat: 59.327937, 
+            lng: 18.091391
+    }],
+    isEditing: false,
+    isOpen: false,
+    searchString: ''
+    }
 
-  onMapMounted (ref) {
+    //Map methods
+    this.handleMapClick = this.handleMapClick.bind(this);
+    this.setNewMarker = this.setNewMarker.bind(this);
+    this.handleToggleOpen = this.handleToggleOpen.bind(this);
+    this.handleToggleClose = this.handleToggleClose.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleNameChange = this.handleNameChange.bind(this);
+    this.handleDayChange = this.handleDayChange.bind(this);
+    
+
+    //Table methods
+    this.updateSearchString = this.updateSearchString.bind(this);
+}
+
+/* MAP METHODS */
+
+onMapMounted (ref) {
 
     refs.map = ref;
     refs.mapObject = ref.context[MAP];
     
 }
 
-  onToggleOpen = (marker) => {
+handleMapClick = (event) => {
 
-    this.setState({
-      marker: {
-        isOpen: !marker.isOpen
-      }
-    });
-
-    console.log('isOpen: ', this.state.marker.isOpen);
-  }
-
-  setNewMarker = (newPlace) => {
-
-    this.setState({
-      markers: this.state.markers.concat(newPlace)
-    });
-
-    console.log('Ny lista: ', this.state);
-}
-
-handleMapClick = event => {
+  console.log('markers:', this.state.markers);
   //You must use () when accessing lat and lng in Google Maps event-object since they are functions in the object.
-    const newPlace = {name: 'En plats',
+    const newPlace = {
+                    id: 2,
+                    name: '',
+                    day: '',
                     lat: event.latLng.lat(), 
                     lng: event.latLng.lng()
                   };
-    
+
+    this.setState({
+        isEditing: true,
+    });
     this.setNewMarker(newPlace);
 }
 
-  handleSubmit = marker => {
-    this.setState({markers: [...this.state.markers, marker]});
+setNewMarker = newPlace => {
+
+  this.setState({
+    markers: this.state.markers.concat(newPlace),
   }
+);
+
+  //console.log('Ny lista: ', this.state);
+}
+
+handleToggleOpen = () => {
+    
+  this.setState({
+      isOpen: true
+  });
+}
+
+handleToggleClose = () => {
+  this.setState({
+      isOpen: false
+  });
+}
+
+handleSubmit = (e, marker) => {
+  e.preventDefault();
+  //console.log('submit: ', this.state);
+  let markers = JSON.parse(JSON.stringify(this.state.mapMarkers));
+  
+  const newItem = {
+    name: this.name.value,
+    day: this.day.value,
+    lat: this.lat.value,
+    lng: this.lng.value
+  };
+  //console.log('itemList: ', newItem);
+  
+  
+  this.setState({
+      mapMarkers: newItem,
+      isEditing: false,
+      isOpen: false
+  });
+  
+}
+
+handleNameChange (event) {
+  this.setState({
+      mapMarkers: {name: this.name.value}});
+}
+
+handleDayChange (event) {
+  this.setState({
+      mapMarkers: {day: this.day.value}
+  });
+}
+
+/* TABLE METHODS */
+
+updateSearchString (event) {
+  console.log(event.target.value);
+  this.setState({
+      searchString: event.target.value.substr(0, 50)
+  });
+}
 
   panToMarker = (i) => {
-    const { markers } = this.state;
+    const { markers } = this.props;
 
-    console.log('Marker: ', markers[i]);
+    
 
-    const lat = markers[i].lat;
-    const lng = markers[i].lng;
+    const latLng = {lat:markers[i].lat,
+                    lng: markers[i].lng
+                    };
+    
+                    this.setState({
+                      mapStart: {
+                        center: {
+                          lat: latLng.lat,
+                          lng: latLng.lng
+                        }
+                      }
+                    });
 
-    this.setState({
-      mapStart: {
-        center: {
-          lat: lat,
-          lng: lng,
-          
-        }}
-    });
-
-    refs.mapObject.setZoom(18);
-
-    console.log('panToMarker state: ', this.state.mapStart);
+    refs.mapObject.setZoom(17);
 
   }
 
-  removeMarker = index => {
-    const { markers } = this.state;
+  removeTableItem = index => {
+    const { mapMarkers, tableItems } = this.state;
 
     this.setState({
-      markers: markers.filter((marker, i) => {
+      mapMarkers: mapMarkers.filter((marker, i) => {
+        return i !== index;
+      }),tableItems: tableItems.filter((marker, i) => {
         return i !== index;
       })
     });
-
   }
 
   render() {
-    const { markers, mapStart } = this.state;
+    console.log('App: ', this.state);
+    const { markers, mapStart, searchString } = this.state;
     return (
       <div className="container">
-        <Map onMapMounted={this.onMapMounted} mapStart={mapStart} markers={markers} handleMapClick={this.handleMapClick} onToggleOpen={this.onToggleOpen} />
-        <Table markers={markers} removeMarker={this.removeMarker} panToMarker={this.panToMarker} />
-        
+        <Map onMapMounted={this.onMapMounted}
+            mapStart={mapStart}
+            markers={markers}
+            isEditing={this.state.isEditing}
+            isOpen={this.state.isOpen}
+            handleMapClick={this.handleMapClick}
+            handleToggleOpen={this.handleToggleOpen}
+            />
+        <Table items={markers}
+              isEditing={this.state.isEditing}
+              removeTableItem={this.removeTableItem}
+              panToMarker={this.panToMarker}
+              searchString={searchString}
+              updateSearchString={this.updateSearchString}
+              />
+              
       </div>
     );
   }
 }
+
+
 
 export default App;
