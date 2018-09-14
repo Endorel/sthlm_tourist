@@ -2,7 +2,27 @@ import React, { Component } from 'react';
 import { Marker, InfoWindow } from 'react-google-maps';
 
 class MarkerInfoWindow extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isOpen: false
+        }
+        this.handleToggleOpen = this.handleToggleOpen.bind(this);
+        this.handleToggleClose = this.handleToggleClose.bind(this);
+    }
 
+    handleToggleOpen = () => {
+    
+        this.setState({
+            isOpen: true
+        });
+      }
+
+    handleToggleClose = () => {
+        this.setState({
+            isOpen: false
+        });
+      }
         
     render () {
         console.log('Info: ', this.props);
@@ -11,27 +31,17 @@ class MarkerInfoWindow extends Component {
             <Marker
                 key={marker.id}
                 position={{ lat: marker.lat, lng: marker.lng}}
-                onClick={this.props.handleToggleOpen}
+                onClick={this.handleToggleOpen}
                 >
-
-                {
-                    (this.props.isEditing == false) && this.props.isOpen &&
-                <InfoWindow onCloseClick={this.handleToggleClose}>
-                    <span>{this.props.markers.name}</span>
-                </InfoWindow>
-                }
-                {this.props.isEditing && this.props.isOpen &&
+                    {
+                        this.state.isOpen &&
                     <InfoWindow onCloseClick={this.handleToggleClose}>
-                        <form onSubmit={this.handleSubmit}>
-                            <input ref={input => this.name = input} type='text' name='name' value={marker.name} onChange={this.handleNameChange} />
-                            <input ref={input => this.day = input} type='text' name='day' value={marker.day} onChange={this.handleDayChange} />
-                            <input ref={input => this.lat = input} type='hidden' name='lat' value={marker.lat} readOnly />
-                            <input ref={input => this.lng = input} type='hidden' name='lng' value={marker.lng} readOnly />
-                            <button type='submit'>Save</button>
-                        </form>
+                    <div>
+                        <span>{marker.name}</span><br/>
+                        <span>Visit on: {marker.day}</span>
+                    </div>
                     </InfoWindow>
-                }
-                
+                    }
             </Marker>
         );
     }

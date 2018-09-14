@@ -15,27 +15,29 @@ const RenderMap = withGoogleMap(props => (
             props.markers.map((marker, i) => (
                 <MarkerInfoWindow key={i}
                                 marker={marker}
-                                isEditing={props.isEditing}
+                                mapMarkers={props.markers}
                                 isOpen={props.isOpen}
                                 handleToggleOpen={props.handleToggleOpen}
-                                >
-                    
-                </MarkerInfoWindow>
+                                />
             ))
         }
     </GoogleMap >
 ));
 
 class Map extends Component {
-  
+    
+
+    
+    
 
     render() {
         console.log('Props', this.props);
         //console.log('Map state', this.state.mapMarkers);
         return (
             <div>
+                
                 <RenderMap
-                    containerElement = {<div style={{ height: '700px', width: '1200px'}} />}
+                    containerElement = {<div style={{ height: '700px', width: '1200px', margin: 'auto'}} />}
                     mapElement = {<div style={{height: '100%'}} />}
                     onMapMounted={this.props.onMapMounted}
                     markers={this.props.markers}
@@ -44,7 +46,6 @@ class Map extends Component {
                     center={this.props.mapStart.center}
                     zoom={this.props.mapStart.zoom}
                     handleMapClick={this.props.handleMapClick}
-                    handleToggleOpen={this.props.handleToggleOpen}
                 />
             </div>
         )
