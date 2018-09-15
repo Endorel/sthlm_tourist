@@ -33,3 +33,6 @@ I ran into some issues when building the panTo-function. While I could pan to th
 
 https://github.com/tomchentw/react-google-maps/issues/161#issuecomment-310553564
 
+## Conclusion
+This was a fun project to work on. I would have liked to have done a few things differently, bypassing the store in some cases for instance. I wanted to keep the store as clean as possible, but I also wanted to deliver the project this decade, so I surrendered to the inevitable.
+
