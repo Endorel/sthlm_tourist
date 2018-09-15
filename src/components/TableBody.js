@@ -11,10 +11,7 @@ class TableBody extends Component {
     
 
     render () {
-
-        
-
-        console.log('Table: ', this.props);
+        //console.log('Table: ', this.props);
         const rows = this.props.items.map((row, index) => {
             return (
                 <TableRowUI key={index}>

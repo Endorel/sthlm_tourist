@@ -31,7 +31,7 @@ class Map extends Component {
     
 
     render() {
-        console.log('Props', this.props);
+        //console.log('Props', this.props);
         //console.log('Map state', this.state.mapMarkers);
         return (
             <div>

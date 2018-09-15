@@ -25,7 +25,7 @@ class MarkerInfoWindow extends Component {
       }
         
     render () {
-        console.log('Info: ', this.props);
+        //console.log('Info: ', this.props);
         const { marker } = this.props;
         return (
             <Marker

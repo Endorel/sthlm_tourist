@@ -13,7 +13,7 @@ class Table extends Component {
 
     render () {
 
-        console.log('tableItems: ', this.props);
+        //console.log('tableItems: ', this.props);
         const { removeTableItem, panToMarker, items } = this.props;
         let filteredItems = items.filter(
             (item) => {

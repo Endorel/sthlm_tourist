@@ -10,8 +10,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 class AddPostDialog extends Component {
     
+    
 
     render () {
+        //console.log('Formprops: ', this.data);
         return (
             <Dialog
             open={this.props.open}

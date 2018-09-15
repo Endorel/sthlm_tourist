@@ -6,7 +6,11 @@ import {MAP} from 'react-google-maps/lib/constants';
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import AddPostDialog from './components/Form'
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 //gain access to google.maps.Map in order to get access to the setZoom method
 //because package does not expose this method
@@ -33,6 +37,9 @@ class App extends Component {
             lat: 59.327937, 
             lng: 18.091391
     }],
+      newName: '',
+      newDay: '',
+    newMarkerCoords: {},
     isEditing: false,
     isOpen: false,
     searchString: '',
@@ -51,7 +58,12 @@ class App extends Component {
     this.updateSearchString = this.updateSearchString.bind(this);
 }
 
-handleClickOpen = () => {
+handleClickOpen = (coords) => {
+  //console.log(coords);
+  const latLng = {
+    lat: coords.lat(),
+    lng: coords.lng()
+  }
   this.setState({ open: true });
 };
 
@@ -72,10 +84,25 @@ handleMapClick = (event) => {
 
   const latLng = event.latLng;
 
-  console.log('marker:', latLng.lat());
-  this.handleClickOpen();
+  this.handleClickOpen(latLng);
   //You must use () when accessing lat and lng in Google Maps event-object since they are functions in the object.
-    
+    this.setState({
+      newMarkerCoords: {
+        lat: latLng.lat(),
+        lng: latLng.lng()
+      }
+    });
+
+  console.log('marker:', this.state.newMarkerCoords);
+
+}
+
+onInputChange = (e) => {
+  this.setState({
+    [e.target.name]: e.target.value
+});
+console.log(this.state.newName);
+
 }
 
 setNewMarker = newPlace => {
@@ -89,22 +116,25 @@ setNewMarker = newPlace => {
 
 handleSubmit = (e, marker) => {
   e.preventDefault();
+
+  console.log('formulär: ', this.state.newMarkerText);
+  
   let markers = JSON.parse(JSON.stringify(this.state.markers));
+  const coords = this.state.newMarkerCoords;
   
   const newPlace = {
     id: 2,
-    name: '',
-    day: '',
-    lat: marker.lat, 
-    lng: marker.lng
+    name: this.state.newName,
+    day: this.state.newDay,
+    lat: coords.lat, 
+    lng: coords.lng
   };
 
 this.setNewMarker(newPlace);
-  
+this.handleClose();
 
   
 }
-
 
 
 /* TABLE METHODS */
@@ -147,19 +177,56 @@ updateSearchString (event) {
   }
 
   render() {
-    console.log('App: ', this.state);
+    //console.log('App: ', this.state);
     const { markers, mapStart, searchString } = this.state;
     return (
       <div style={{fontFamily: 'Roboto'}}>
         <div style={{width: '80%', margin: '5% auto', textAlign: 'center'}}>
           <h1>Stockholm tourist</h1>
           <p>Click the map to add places to your list of places to visit.</p>
-          <AddPostDialog
-          open={this.state.open}
-          onClose={this.handleClose}
-          handleSubmit={this.handleSubmit}
-          aria-labelledby="form-dialog-title"
-        />
+          <Dialog
+            open={this.state.open}
+            onClose={this.state.handleClose}
+            aria-labelledby="form-dialog-title"
+            >
+            <DialogTitle id="form-dialog-title">Add place to visit</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                Enter a name and day for visit:
+                </DialogContentText>
+                <form id="markerForm" onSubmit={this.handleSubmit} onChange={this.onInputChange}>
+                <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                name="newName"
+                label="Name"
+                type="text"
+                fullWidth
+                />
+                <TextField
+                margin="dense"
+                id="day"
+                name="newDay"
+                label="Day"
+                type="text"
+                fullWidth
+                />
+                </form>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={this.onClose}
+                        color="primary"
+                        type="submit"
+                        form="markerForm"
+                        >
+                Add
+                </Button>
+                <Button onClick={this.onClose} color="primary">
+                Cancel
+                </Button>
+            </DialogActions>
+            </Dialog>
         </div>
         <Map onMapMounted={this.onMapMounted}
             mapStart={mapStart}
@@ -167,6 +234,7 @@ updateSearchString (event) {
             isOpen={this.state.isOpen}
             handleMapClick={this.handleMapClick}
             />
+
         <Table items={markers}
               isEditing={this.state.isEditing}
               removeTableItem={this.removeTableItem}
