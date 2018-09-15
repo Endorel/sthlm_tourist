@@ -36,9 +36,9 @@ class MarkerInfoWindow extends Component {
                 >
                     { this.state.isOpen &&
                         <InfoWindow onCloseClick={this.handleToggleClose}>
-                        <div>
-                            <span>{marker.name}</span><br/>
-                            <span>Visit on: {marker.day}</span>
+                        <div style={{marginLeft: '10%', textAlign: 'center'}}>
+                            <h2 style={{marginBottom: '0'}}>{marker.name}</h2>
+                            <p style={{fontSize: '14px', marginTop: '0'}} ><b>Visit on: </b>{marker.day}</p>
                         </div>
                         </InfoWindow>
                     }
