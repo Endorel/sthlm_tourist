@@ -3,7 +3,7 @@ import { withGoogleMap, GoogleMap } from "react-google-maps";
 import MarkerInfoWindow from './MarkerInfoWindow';
 
 
-
+//Needs to be handled outside class to be rendered properly
 const RenderMap = withGoogleMap(props => (
     
     <GoogleMap
@@ -19,23 +19,17 @@ const RenderMap = withGoogleMap(props => (
                                 isOpen={props.isOpen}
                                 handleToggleOpen={props.handleToggleOpen}
                                 />
-            ))
+            ))//end map-function
         }
     </GoogleMap >
 ));
 
 class Map extends Component {
-    
-
-    
-    
 
     render() {
-        //console.log('Props', this.props);
-        //console.log('Map state', this.state.mapMarkers);
+
         return (
-            <div>
-                
+            <div>                
                 <RenderMap
                     containerElement = {<div style={{ height: '700px', width: '1200px', margin: 'auto'}} />}
                     mapElement = {<div style={{height: '100%'}} />}

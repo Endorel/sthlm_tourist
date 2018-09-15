@@ -1,8 +1,12 @@
 import React, { Component } from "react";
-//import './App.css';
+import {MAP} from 'react-google-maps/lib/constants';//google map reference
+
+//COMPONENTS
+
 import Map from './components/Map';
 import Table from './components/Table';
-import {MAP} from 'react-google-maps/lib/constants';
+
+//MATERIAL UI IMPORTS
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -12,8 +16,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-//gain access to google.maps.Map in order to get access to the setZoom method
-//because package does not expose this method
+//gain access to google.maps.Map in order to get
+//access to the setZoom method used for pan to marker
+//package does not expose this method
 const refs = {
   map: undefined,
   mapObject: undefined
@@ -29,27 +34,27 @@ class App extends Component {
             lng: 18.063240
           },
         zoom: 11
-    },
-    markers: [{
-      id: 1,
-            name: 'Vasa',
-            day: 'Monday',
-            lat: 59.327937, 
-            lng: 18.091391
-    }],
-      newName: '',
-      newDay: '',
-    newMarkerCoords: {},
-    isEditing: false,
-    isOpen: false,
-    searchString: '',
-    open: false
+      },
+      markers: [{
+              name: 'Vasa',
+              day: 'Monday',
+              lat: 59.327937, 
+              lng: 18.091391
+      }],
+        newName: '',
+        newDay: '',
+      newMarkerCoords: {},
+      isEditing: false,
+      isOpen: false,
+      searchString: '',
+      open: false
     }
 
     //Map methods
     this.handleMapClick = this.handleMapClick.bind(this);
     this.setNewMarker = this.setNewMarker.bind(this);
     
+    //Dialog methods
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClickOpen = this.handleClickOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);   
@@ -58,18 +63,43 @@ class App extends Component {
     this.updateSearchString = this.updateSearchString.bind(this);
 }
 
-handleClickOpen = (coords) => {
-  //console.log(coords);
-  const latLng = {
-    lat: coords.lat(),
-    lng: coords.lng()
-  }
+handleClickOpen = () => {
   this.setState({ open: true });
 };
 
 handleClose = () => {
   this.setState({ open: false });
 };
+
+onInputChange = (e) => {
+  this.setState({
+    [e.target.name]: e.target.value
+  });
+}
+
+handleSubmit = (e, marker) => {
+  e.preventDefault();
+  
+  const coords = this.state.newMarkerCoords;
+  
+  const newPlace = {
+    name: this.state.newName,
+    day: this.state.newDay,
+    lat: coords.lat, 
+    lng: coords.lng
+  };
+
+  console.log(newPlace);
+
+  this.setNewMarker(newPlace);
+  this.handleClose();  
+}
+
+setNewMarker = newPlace => {
+  this.setState({
+    markers: this.state.markers.concat(newPlace),
+  });
+}
 
 /* MAP METHODS */
 
@@ -84,7 +114,8 @@ handleMapClick = (event) => {
 
   const latLng = event.latLng;
 
-  this.handleClickOpen(latLng);
+  this.handleClickOpen();
+
   //You must use () when accessing lat and lng in Google Maps event-object since they are functions in the object.
     this.setState({
       newMarkerCoords: {
@@ -92,50 +123,7 @@ handleMapClick = (event) => {
         lng: latLng.lng()
       }
     });
-
-  console.log('marker:', this.state.newMarkerCoords);
-
 }
-
-onInputChange = (e) => {
-  this.setState({
-    [e.target.name]: e.target.value
-});
-console.log(this.state.newName);
-
-}
-
-setNewMarker = newPlace => {
-
-  this.setState({
-    markers: this.state.markers.concat(newPlace),
-  }
-);
-
-}
-
-handleSubmit = (e, marker) => {
-  e.preventDefault();
-
-  console.log('formulär: ', this.state.newMarkerText);
-  
-  let markers = JSON.parse(JSON.stringify(this.state.markers));
-  const coords = this.state.newMarkerCoords;
-  
-  const newPlace = {
-    id: 2,
-    name: this.state.newName,
-    day: this.state.newDay,
-    lat: coords.lat, 
-    lng: coords.lng
-  };
-
-this.setNewMarker(newPlace);
-this.handleClose();
-
-  
-}
-
 
 /* TABLE METHODS */
 
@@ -146,13 +134,13 @@ updateSearchString (event) {
   });
 }
 
-  panToMarker = (i) => {
+panToMarker = (i) => {
     const { markers } = this.state;
     console.log(markers);
-    const latLng = {lat:markers[i].lat,
-                    lng: markers[i].lng
+    const latLng = {
+                      lat:markers[i].lat,
+                      lng: markers[i].lng
                     };
-    
                     this.setState({
                       mapStart: {
                         center: {
@@ -161,24 +149,23 @@ updateSearchString (event) {
                         }
                       }
                     });
-
-    refs.mapObject.setZoom(17);
-
+    refs.mapObject.setZoom(17);//The method that was exposed on google.maps.MAP
   }
 
-  removeTableItem = index => {
-    const { markers, tableItems } = this.state;
+removeTableItem = index => {
+    const { markers } = this.state;
 
     this.setState({
       markers: markers.filter((marker, i) => {
         return i !== index;
       })
     });
-  }
+}
 
-  render() {
-    //console.log('App: ', this.state);
+render() {
+
     const { markers, mapStart, searchString } = this.state;
+
     return (
       <div style={{fontFamily: 'Roboto'}}>
         <div style={{width: '80%', margin: '5% auto', textAlign: 'center'}}>
@@ -194,7 +181,9 @@ updateSearchString (event) {
                 <DialogContentText>
                 Enter a name and day for visit:
                 </DialogContentText>
-                <form id="markerForm" onSubmit={this.handleSubmit} onChange={this.onInputChange}>
+                <form id="markerForm"
+                      onSubmit={this.handleSubmit}
+                      onChange={this.onInputChange}>
                 <TextField
                 autoFocus
                 margin="dense"
@@ -247,7 +236,5 @@ updateSearchString (event) {
     );
   }
 }
-
-
 
 export default App;

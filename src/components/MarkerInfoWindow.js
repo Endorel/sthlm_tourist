@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Marker, InfoWindow } from 'react-google-maps';
 
+//this needed to be a "smart" component to handle the state for the InfoWindow.
+//If put in App.js all InfoWindows would open when 1 is clicked
+
 class MarkerInfoWindow extends Component {
     constructor(props) {
         super(props);
@@ -12,7 +15,6 @@ class MarkerInfoWindow extends Component {
     }
 
     handleToggleOpen = () => {
-    
         this.setState({
             isOpen: true
         });
@@ -25,7 +27,6 @@ class MarkerInfoWindow extends Component {
       }
         
     render () {
-        //console.log('Info: ', this.props);
         const { marker } = this.props;
         return (
             <Marker
@@ -33,14 +34,13 @@ class MarkerInfoWindow extends Component {
                 position={{ lat: marker.lat, lng: marker.lng}}
                 onClick={this.handleToggleOpen}
                 >
-                    {
-                        this.state.isOpen &&
-                    <InfoWindow onCloseClick={this.handleToggleClose}>
-                    <div>
-                        <span>{marker.name}</span><br/>
-                        <span>Visit on: {marker.day}</span>
-                    </div>
-                    </InfoWindow>
+                    { this.state.isOpen &&
+                        <InfoWindow onCloseClick={this.handleToggleClose}>
+                        <div>
+                            <span>{marker.name}</span><br/>
+                            <span>Visit on: {marker.day}</span>
+                        </div>
+                        </InfoWindow>
                     }
             </Marker>
         );
